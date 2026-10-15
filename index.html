@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conference Presentations | Jennifer Coon</title>
+<meta name="description" content="Demos and slides from conference presentations by Jennifer Coon.">
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+
+html { font-size: 100%; -webkit-text-size-adjust: 100%; }
+
+[hidden] { display: none !important; }
+
+body {
+  margin: 0;
+  background: #ffffff;
+  color: #1c1c1c;
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-size: 1.125rem;
+  line-height: 1.6;
+}
+
+.wrap {
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -5rem;
+  z-index: 10;
+  padding: 0.75rem 1rem;
+  background: #ffffff;
+  color: #1c1c1c;
+  border: 3px solid #1c1c1c;
+  font-weight: bold;
+}
+
+.skip-link:focus { top: 1rem; }
+
+a:focus-visible,
+input:focus-visible {
+  outline: 3px solid #000000;
+  outline-offset: 3px;
+}
+
+main:focus { outline: none; }
+
+/* Header */
+.site-header {
+  background: #1f3814;
+  color: #ffffff;
+  padding: 2.5rem 0 2.25rem;
+  border-bottom: 6px solid #000000;
+}
+
+.eyebrow {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(2rem, 6vw, 3rem);
+  line-height: 1.15;
+}
+
+.lede {
+  max-width: 40rem;
+  margin: 1rem 0 0;
+  font-size: 1.2rem;
+}
+
+/* Search and year links */
+.tools {
+  display: grid;
+  gap: 1.25rem;
+  margin: 2rem 0 1rem;
+}
+
+.tools label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-weight: bold;
+}
+
+input[type="search"] {
+  width: 100%;
+  max-width: 32rem;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.75rem;
+  font: inherit;
+  color: #1c1c1c;
+  background: #ffffff;
+  border: 2px solid #1c1c1c;
+  border-radius: 6px;
+}
+
+.hint {
+  margin: 0.4rem 0 0;
+  font-size: 1rem;
+  color: #434343;
+}
+
+.nav-label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-weight: bold;
+}
+
+#year-nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+#year-nav a {
+  display: inline-block;
+  min-height: 2.75rem;
+  padding: 0.5rem 1rem;
+  border: 2px solid #1f3814;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #1f3814;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+#year-nav a:hover {
+  background: #1f3814;
+  color: #ffffff;
+}
+
+.count {
+  margin: 1rem 0 0;
+  font-size: 1rem;
+  color: #434343;
+}
+
+/* Year groups and presentation cards */
+.year-group { margin: 2rem 0 0; }
+
+.year-group h2 {
+  margin: 0 0 1rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 3px solid #1f3814;
+  color: #1c1c1c;
+  font-size: 2rem;
+  line-height: 1.2;
+}
+
+.list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+  gap: 1.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.list > li { display: flex; }
+
+.card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 1.25rem;
+  background: #ffffff;
+  border: 1px solid #434343;
+  border-top: 8px solid #1f3814;
+  border-radius: 6px;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  margin: 0;
+}
+
+.date {
+  font-size: 1rem;
+  font-weight: bold;
+  letter-spacing: 0.02em;
+  color: #1f3814;
+}
+
+.tag {
+  padding: 0 0.6rem;
+  border: 1px solid #1c1c1c;
+  border-radius: 4px;
+  color: #1c1c1c;
+  font-size: 0.9rem;
+}
+
+.card h3 {
+  margin: 0.4rem 0 0.25rem;
+  font-size: 1.25rem;
+  line-height: 1.3;
+}
+
+.conf {
+  margin: 0;
+  font-weight: bold;
+}
+
+.where {
+  margin: 0 0 0.75rem;
+  color: #434343;
+  font-size: 1.05rem;
+}
+
+.desc { margin: 0 0 1rem; }
+
+.links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: auto 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.btn {
+  display: block;
+  min-height: 2.75rem;
+  padding: 0.6rem 1rem;
+  border: 2px solid #1c1c1c;
+  border-radius: 6px;
+  font-weight: bold;
+  line-height: 1.4;
+  text-align: center;
+  text-decoration: none;
+}
+
+.btn.primary { background: #1f3814; border-color: #1f3814; color: #ffffff; }
+.btn.primary:hover { background: #000000; border-color: #000000; }
+.btn.secondary { background: #ffffff; color: #1c1c1c; }
+.btn.secondary:hover { background: #434343; color: #ffffff; }
+
+.message {
+  margin: 2rem 0 0;
+  padding: 1rem 1.25rem;
+  background: #ffffff;
+  border: 2px solid #1c1c1c;
+  border-radius: 6px;
+}
+
+/* Footer */
+.site-footer {
+  margin-top: 3rem;
+  padding: 2rem 0;
+  background: #1f3814;
+  color: #ffffff;
+}
+
+.site-footer p { margin: 0 0 0.75rem; }
+.site-footer p:last-child { margin-bottom: 0; }
+
+.site-footer a {
+  color: #ffffff;
+  font-weight: bold;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.site-footer a:focus-visible { outline-color: #ffffff; }
+
+@media print {
+  body { background: #ffffff; color: #000000; }
+  .skip-link, .tools, .site-footer { display: none; }
+  .site-header { background: #ffffff; color: #000000; border-bottom: 2px solid #000000; }
+  .card { break-inside: avoid; border: 1px solid #000000; }
+}
+</style>
+</head>
+<body id="top">
+<a class="skip-link" href="#main">Skip to presentations</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <p class="eyebrow">Jennifer Coon</p>
+    <h1>Conference Presentations</h1>
+    <p class="lede">Interactive demos and slides from sessions I have presented at conferences. Open a demo to try it yourself, or download the slides when they are shared.</p>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+  <div class="wrap">
+    <form id="search-form" class="tools" role="search">
+      <div>
+        <label for="search">Search presentations</label>
+        <input type="search" id="search" name="search" autocomplete="off" aria-describedby="search-hint">
+        <p id="search-hint" class="hint">Search by title, conference, location, or topic.</p>
+      </div>
+      <nav id="year-nav" aria-label="Jump to year" hidden></nav>
+    </form>
+
+    <p id="count" class="count"></p>
+    <div id="live" class="sr-only" role="status" aria-live="polite"></div>
+
+    <div id="results">
+      <noscript>
+        <p class="message">This page needs JavaScript turned on to show the list of presentations.</p>
+      </noscript>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p><a href="https://sites.google.com/view/jennifercoon">Visit Jennifer Coon's home page</a></p>
+    <p><a href="#top">Back to top</a></p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  var DATA_URL = 'data/conferences.json';
+  var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
+    'August', 'September', 'October', 'November', 'December'];
+  var SLIDE_TYPES = { pptx: 'PowerPoint', ppt: 'PowerPoint', ppsx: 'PowerPoint',
+    pps: 'PowerPoint', pdf: 'PDF', key: 'Keynote' };
+
+  var formEl = document.getElementById('search-form');
+  var searchEl = document.getElementById('search');
+  var navEl = document.getElementById('year-nav');
+  var countEl = document.getElementById('count');
+  var liveEl = document.getElementById('live');
+  var resultsEl = document.getElementById('results');
+  var all = [];
+  var timer = null;
+
+  function el(tag, className, text) {
+    var node = document.createElement(tag);
+    if (className) { node.className = className; }
+    if (text !== undefined && text !== null) { node.textContent = text; }
+    return node;
+  }
+
+  function pluralize(count) {
+    return count + (count === 1 ? ' presentation' : ' presentations');
+  }
+
+  function parseDate(value) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(value || ''));
+    if (!m) { return null; }
+    var month = parseInt(m[2], 10);
+    var day = parseInt(m[3], 10);
+    if (month < 1 || month > 12 || day < 1 || day > 31) { return null; }
+    return { year: m[1], iso: m[0], text: MONTHS[month - 1] + ' ' + day + ', ' + m[1] };
+  }
+
+  function safeUrl(value) {
+    var url = String(value || '').trim();
+    if (!url) { return ''; }
+    if (/^https:\/\//i.test(url)) { return url; }
+    if (/^[A-Za-z0-9][A-Za-z0-9 ._()%\/\-]*$/.test(url) && url.indexOf('..') === -1) { return url; }
+    return '';
+  }
+
+  function formatSize(bytes) {
+    var n = Number(bytes);
+    if (!n || n < 0) { return ''; }
+    if (n >= 1048576) { return (n / 1048576).toFixed(1) + ' MB'; }
+    return Math.max(1, Math.round(n / 1024)) + ' KB';
+  }
+
+  function slidesInfo(entry) {
+    var url = safeUrl(entry.slidesUrl);
+    if (!url) { return null; }
+    var path = url.split('?')[0].split('#')[0];
+    var found = /\.([A-Za-z0-9]+)$/.exec(path);
+    var kind = found ? (SLIDE_TYPES[found[1].toLowerCase()] || '') : '';
+    var detail = [kind, formatSize(entry.slidesSize)].filter(Boolean).join(', ');
+    return { url: url, isFile: kind !== '', detail: detail };
+  }
+
+  function sortEntries(list) {
+    return list.slice().sort(function (a, b) {
+      var da = String(a.date || '');
+      var db = String(b.date || '');
+      if (da !== db) { return da < db ? 1 : -1; }
+      return String(a.title || '').localeCompare(String(b.title || ''));
+    });
+  }
+
+  function buildLink(url, label, title, style, download) {
+    var item = el('li');
+    var link = el('a', 'btn ' + style);
+    link.href = url;
+    if (download) { link.setAttribute('download', ''); }
+    link.appendChild(document.createTextNode(label));
+    link.appendChild(el('span', 'sr-only', ' for ' + title));
+    item.appendChild(link);
+    return item;
+  }
+
+  function buildCard(entry, id) {
+    var when = parseDate(entry.date);
+    var item = el('li');
+    var card = el('article', 'card');
+    card.setAttribute('aria-labelledby', id);
+
+    var meta = el('p', 'meta');
+    if (when) {
+      var time = el('time', 'date', when.text);
+      time.setAttribute('datetime', when.iso);
+      meta.appendChild(time);
+    }
+    if (entry.type) { meta.appendChild(el('span', 'tag', entry.type)); }
+    if (meta.childNodes.length) { card.appendChild(meta); }
+
+    var heading = el('h3', null, entry.title);
+    heading.id = id;
+    card.appendChild(heading);
+
+    if (entry.conference) { card.appendChild(el('p', 'conf', entry.conference)); }
+    if (entry.location) { card.appendChild(el('p', 'where', entry.location)); }
+    if (entry.description) { card.appendChild(el('p', 'desc', entry.description)); }
+
+    var links = el('ul', 'links');
+    var demo = safeUrl(entry.demoUrl);
+    if (demo) { links.appendChild(buildLink(demo, 'Open demo', entry.title, 'primary', false)); }
+    var slides = slidesInfo(entry);
+    if (slides) {
+      var label = (slides.isFile ? 'Download slides' : 'View slides') +
+        (slides.detail ? ' (' + slides.detail + ')' : '');
+      var local = !/^https:/i.test(slides.url);
+      links.appendChild(buildLink(slides.url, label, entry.title, 'secondary', slides.isFile && local));
+    }
+    if (links.childNodes.length) { card.appendChild(links); }
+
+    item.appendChild(card);
+    return item;
+  }
+
+  function buildNav(years) {
+    navEl.textContent = '';
+    if (years.length < 2) { navEl.hidden = true; return; }
+    var span = el('span', 'nav-label', 'Jump to year');
+    span.setAttribute('aria-hidden', 'true');
+    var list = el('ul');
+    years.forEach(function (year) {
+      var item = el('li');
+      var link = el('a', null, year === 'Undated' ? 'Date not listed' : year);
+      link.href = '#year-' + year;
+      item.appendChild(link);
+      list.appendChild(item);
+    });
+    navEl.appendChild(span);
+    navEl.appendChild(list);
+    navEl.hidden = false;
+  }
+
+  function render(list) {
+    var years = [];
+    var currentYear = null;
+    var listEl = null;
+    resultsEl.textContent = '';
+
+    list.forEach(function (entry) {
+      var when = parseDate(entry.date);
+      var year = when ? when.year : 'Undated';
+      if (year !== currentYear) {
+        var section = el('section', 'year-group');
+        var heading = el('h2', null, year === 'Undated' ? 'Date not listed' : year);
+        heading.id = 'year-' + year;
+        section.setAttribute('aria-labelledby', heading.id);
+        listEl = el('ul', 'list');
+        section.appendChild(heading);
+        section.appendChild(listEl);
+        resultsEl.appendChild(section);
+        years.push(year);
+        currentYear = year;
+      }
+      listEl.appendChild(buildCard(entry, 'title-' + entry.indexId));
+    });
+
+    buildNav(years);
+  }
+
+  function matches(entry, terms) {
+    if (!terms.length) { return true; }
+    var when = parseDate(entry.date);
+    var haystack = [entry.title, entry.conference, entry.location, entry.type,
+      entry.description, entry.date, when ? when.text : ''].join(' ').toLowerCase();
+    return terms.every(function (term) { return haystack.indexOf(term) !== -1; });
+  }
+
+  function applyFilter(announce) {
+    var query = searchEl.value.trim().toLowerCase();
+    var terms = query ? query.split(/\s+/) : [];
+    var shown = all.filter(function (entry) { return matches(entry, terms); });
+    var text = terms.length
+      ? 'Showing ' + shown.length + ' of ' + pluralize(all.length)
+      : pluralize(all.length);
+
+    render(shown);
+    if (terms.length && !shown.length) {
+      resultsEl.appendChild(el('p', 'message',
+        'No presentations match "' + searchEl.value.trim() + '". Try fewer or different words.'));
+    }
+    countEl.textContent = text;
+    if (announce) { liveEl.textContent = text; }
+  }
+
+  function start(data) {
+    var list = Array.isArray(data) ? data : (data && data.presentations) || [];
+    all = sortEntries(list.filter(function (entry) { return entry && entry.title; }));
+    all.forEach(function (entry, i) { entry.indexId = i; });
+
+    if (!all.length) {
+      formEl.hidden = true;
+      countEl.textContent = '';
+      resultsEl.textContent = '';
+      resultsEl.appendChild(el('p', 'message', 'No presentations have been added yet. Please check back soon.'));
+      return;
+    }
+    applyFilter(false);
+  }
+
+  function fail() {
+    formEl.hidden = true;
+    countEl.textContent = '';
+    resultsEl.textContent = '';
+    var note = el('p', 'message', 'The list of presentations could not be loaded. Please try again in a few minutes.');
+    note.setAttribute('role', 'alert');
+    resultsEl.appendChild(note);
+  }
+
+  formEl.addEventListener('submit', function (event) {
+    event.preventDefault();
+    applyFilter(true);
+  });
+
+  searchEl.addEventListener('input', function () {
+    window.clearTimeout(timer);
+    timer = window.setTimeout(function () { applyFilter(true); }, 350);
+  });
+
+  if (!window.fetch) { fail(); return; }
+
+  fetch(DATA_URL, { cache: 'no-cache' })
+    .then(function (response) {
+      if (!response.ok) { throw new Error('Request failed'); }
+      return response.json();
+    })
+    .then(start)
+    .catch(fail);
+}());
+</script>
+</body>
+</html>
