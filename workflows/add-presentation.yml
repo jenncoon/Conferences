@@ -1,0 +1,62 @@
+name: Add presentation from form
+
+on:
+  issues:
+    types: [opened, edited]
+
+permissions:
+  contents: write
+  issues: write
+  pages: write
+
+concurrency:
+  group: add-presentation
+  cancel-in-progress: false
+
+jobs:
+  add:
+    # Only act on the add-a-presentation form, and only when the repository owner submitted it.
+    if: >
+      github.event.issue.user.login == github.repository_owner &&
+      contains(github.event.issue.body, '### Presentation title')
+    runs-on: ubuntu-latest
+    env:
+      ISSUE_NUMBER: ${{ github.event.issue.number }}
+      RESULT_FILE: ${{ runner.temp }}/result.json
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Read the form and update the data file
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: python3 .github/scripts/add_presentation.py add
+
+      - name: Save the change
+        id: save
+        run: |
+          if [ -n "$(git status -s data/conferences.json)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add data/conferences.json
+            git commit -m "Update presentations from issue #${ISSUE_NUMBER}"
+            git push origin HEAD || (git pull -r origin HEAD && git push origin HEAD)
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No change to save."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Ask GitHub Pages to rebuild
+        if: steps.save.outputs.changed == 'true'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X POST "repos/${{ github.repository }}/pages/builds"
+
+      - name: Reply on the issue
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          JOB_STATUS: ${{ job.status }}
+        run: python3 .github/scripts/add_presentation.py reply
