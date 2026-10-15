@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ISSUE_NUMBER: ${{ github.event.issue.number }}
-      RESULT_FILE: ${{ runner.temp }}/result.json
+      RRESULT_FILE: /tmp/result.json
     steps:
       - name: Check out the repository
         uses: actions/checkout@v4
