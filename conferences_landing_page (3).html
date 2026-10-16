@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Teaching Professor: Presentations | Jennifer Coon</title>
+<meta name="description" content="Slides and interactive activities from Jennifer Coon's presentations at Teaching Professor conferences.">
+<style>
+/* ===== COLORS: change these values to restyle the whole page ===== */
+:root{
+  --page:#FFFFFF;     /* page background */
+  --text:#122B22;     /* main text */
+  --band:#124D3A;     /* header band and footer */
+  --band-text:#FFFFFF;
+  --band-soft:#D6EDE0;
+  --heading:#124D3A;  /* headings */
+  --link:#1F6B4E;     /* links */
+  --panel:#E4F3EA;    /* conference panels */
+  --rule:#B9D9C6;     /* divider lines */
+}
+/* ================================================================= */
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--page);color:var(--text);font-family:Verdana, Geneva, Tahoma, sans-serif;font-size:18px;line-height:1.65}
+.skip{position:absolute;left:-999px;top:0;background:var(--band);color:var(--band-text);padding:10px 16px;z-index:10}
+.skip:focus{left:8px;top:8px}
+:focus-visible{outline:3px solid var(--link);outline-offset:3px}
+.wrap{max-width:860px;margin:0 auto;padding:0 20px}
+header{background:var(--band);color:var(--band-text);padding:46px 0 34px}
+h1,h2,h3{font-family:Georgia,'Times New Roman',serif;line-height:1.25}
+h1{font-size:clamp(32px,5.5vw,46px);margin:0 0 12px}
+header p{margin:0;color:var(--band-soft);max-width:640px}
+nav{background:var(--panel);border-bottom:1px solid var(--rule);padding:16px 0}
+nav h2{font-size:16px;margin:0 0 6px;color:var(--heading);font-family:Verdana,Geneva,sans-serif;letter-spacing:.06em;text-transform:uppercase}
+nav ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px 24px}
+nav a{font-weight:700;color:var(--link)}
+main{padding:10px 0 40px}
+.conf{padding:44px 0 8px;border-bottom:1px solid var(--rule)}
+.conf:last-child{border-bottom:0}
+.conf h2{font-size:clamp(25px,3.8vw,32px);margin:0 0 4px;color:var(--heading)}
+.meta{margin:0 0 6px;color:#3D5A4E}
+.pres{background:var(--panel);border-radius:12px;padding:18px 22px;margin:18px 0}
+.pres h3{font-size:21px;margin:0 0 2px;color:var(--heading)}
+.time{margin:0 0 12px;color:#3D5A4E}
+.links{list-style:none;margin:0;padding:0}
+.links li{margin:6px 0}
+.links b{display:inline-block;min-width:200px}
+a{color:var(--link)}
+.soon{margin:14px 0 24px;color:#3D5A4E}
+.note{font-size:16px;color:#3D5A4E;margin:10px 0 0}
+footer{background:var(--band);color:var(--band-soft);padding:26px 0 34px;font-size:16px}
+@media (max-width:520px){.links b{display:block;min-width:0}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+
+<header>
+  <div class="wrap">
+    <h1>The Teaching Professor</h1>
+    <p>Slides and interactive activities from my presentations at Teaching Professor conferences. Choose a conference to see its presentations and files.</p>
+  </div>
+</header>
+
+<nav aria-label="Conferences">
+  <div class="wrap">
+    <h2>Jump to</h2>
+    <ul id="jump"></ul>
+  </div>
+</nav>
+
+<main id="main">
+  <div class="wrap">
+
+    <!-- ============ CONFERENCE 1 ============ -->
+    <section class="conf" id="tpoc-2026" aria-labelledby="tpoc-2026-h">
+      <h2 id="tpoc-2026-h">Teaching Professor Online Conference 2026</h2>
+      <p class="meta">October 21, 2026 &middot; Virtual</p>
+
+      <div class="pres">
+        <h3>Building Interactive Online Activities with AI: A Design Framework</h3>
+        <p class="time">1:30 to 2:15 PM Central</p>
+        <ul class="links">
+          <li><b>Slides:</b> <a href="tpoc-2026/building-interactive-activities-with-ai-slides.pptx">Presentation (PowerPoint)</a></li>
+          <li><b>Activity and brief:</b> <a href="tpoc-2026/">Play One More Hour, then build your own design brief</a></li>
+        </ul>
+      </div>
+
+      <div class="pres">
+        <h3>Designing Course Games with AI for Any Modality</h3>
+        <p class="time">2:30 to 3:15 PM Central</p>
+        <p class="soon" style="margin:0">Materials coming soon.</p>
+      </div>
+    </section>
+
+    <!-- ============ CONFERENCE 2 ============ -->
+    <section class="conf" id="ai-in-education" aria-labelledby="ai-in-education-h">
+      <h2 id="ai-in-education-h">AI in Education Conference</h2>
+      <p class="meta">December 1 to 2, 2026</p>
+      <div class="pres">
+        <h3>A Five-Part Audit for Redesigning Your Course with AI</h3>
+        <p class="time">December 1 &middot; 11:15 AM to 12:00 PM</p>
+        <p class="soon" style="margin:0">Materials coming soon.</p>
+      </div>
+      <div class="pres">
+        <h3>A Recurring Character, Not Just a Recurring Announcement</h3>
+        <p class="time">December 1 &middot; 1:30 to 2:15 PM</p>
+        <p class="soon" style="margin:0">Materials coming soon.</p>
+      </div>
+      <div class="pres">
+        <h3>Same Game, Different Rooms: AI as a Co-Designer</h3>
+        <p class="time">December 2 &middot; 12:30 to 1:15 PM</p>
+        <p class="soon" style="margin:0">Materials coming soon.</p>
+      </div>
+    </section>
+
+    <!-- ============ CONFERENCES 3 TO 5: remove the comment markers around a block, then edit the name ============ -->
+    <!--
+    <section class="conf" id="conference-3" aria-labelledby="conference-3-h">
+      <h2 id="conference-3-h">CONFERENCE NAME</h2>
+      <p class="meta">Date &middot; Location</p>
+      <div class="pres">
+        <h3>Presentation title</h3>
+        <p class="time">Time</p>
+        <ul class="links">
+          <li><b>Slides:</b> <a href="folder-name/file.pptx">Presentation (PowerPoint)</a></li>
+          <li><b>Activity:</b> <a href="folder-name/">Interactive activity</a></li>
+        </ul>
+      </div>
+    </section>
+    -->
+
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">Jennifer Coon, CIA, CFE &middot; Professor of Accounting &middot; Tyler Junior College</div>
+</footer>
+
+<script>
+/* builds the "Jump to" list from the conference sections, so it always matches the page */
+(function(){
+  var ul=document.getElementById('jump');
+  document.querySelectorAll('section.conf').forEach(function(s){
+    var h=s.querySelector('h2'); if(!h) return;
+    var li=document.createElement('li'), a=document.createElement('a');
+    a.href='#'+s.id; a.textContent=h.textContent; li.appendChild(a); ul.appendChild(li);
+  });
+})();
+</script>
+</body>
+</html>
