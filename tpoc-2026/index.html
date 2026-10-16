@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>One More Hour: A Fall Heist</title>
+<style>
+
+html,body{margin:0;padding:0}
+body{background:#2B1018;color:#FFF4E6;font-family:Verdana, Geneva, Tahoma, sans-serif}
+*{box-sizing:border-box}
+::selection{background:#F59B4C;color:#2B1018}
+:focus-visible{outline:3px solid #F59B4C;outline-offset:3px}
+.is-hidden{display:none !important}
+#part-game .inline-link, #part-game .card a:not(.btn-primary){color:#A8391A;font-weight:600}
+#part-brief .navlink{color:#F2D3CB;font-size:16px;text-decoration:underline;white-space:nowrap}
+#part-brief .card{max-width:none;animation:none}
+#part-brief input[type="text"]{margin-bottom:14px;font-size:16px}
+#part-brief textarea{margin-bottom:0}
+@media print{ #part-game{display:none !important} }
+
+#part-game{
+    --bg-void: #2B1018;
+    --bg-panel: #4F1422;
+    --bg-panel-raised: #6B1D2E;
+    --ink-sand: #FFF4E6;
+    --ink-muted: #F2D3CB;
+    --gold: #F59B4C;
+    --coral: #F28B6C;
+    --coral-text: #F28B6C;
+    --teal: #F7C79B;
+    --line: rgba(255,244,230,0.16);
+    --radius: 14px;
+  }
+#part-game{
+    background: var(--bg-void);
+    color: var(--ink-sand);
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    min-height: 100vh;
+    display:flex;
+    flex-direction: column;
+  }
+#part-game .banner{
+    padding-bottom: 30px !important;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 22px;
+    background: linear-gradient(180deg, #4F1422, #2B1018);
+    border-bottom: 1px solid var(--line);
+    flex-wrap: wrap;
+  }
+#part-game .banner-title{
+    font-family: Georgia, 'Times New Roman', serif;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    font-size: clamp(20px, 3vw, 26px);
+    text-transform: none;
+    color: var(--ink-sand);
+    white-space: nowrap;
+  }
+#part-game .banner-title span{ color: var(--gold); }
+#part-game .dials{
+    display:flex;
+    gap: 44px;
+    align-items:center;
+  }
+#part-game .dial{
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    border: 2px solid var(--ink-muted);
+    position: relative;
+    background: var(--bg-panel);
+    transition: border-color .4s ease, background .4s ease, box-shadow .4s ease;
+  }
+#part-game .dial::after{
+    content:"";
+    position:absolute;
+    top: 4px; left: 50%;
+    width: 2px; height: 10px;
+    background: var(--ink-muted);
+    transform-origin: bottom center;
+    transform: translateX(-50%) rotate(0deg);
+    transition: transform .5s ease, background .4s ease;
+  }
+#part-game .dial.solved{
+    border-color: var(--teal);
+    background: radial-gradient(circle at 35% 30%, #FBDDBF, var(--teal));
+    box-shadow: 0 0 14px rgba(247,199,155,0.65);
+  }
+#part-game .dial.solved::after{
+    background: var(--bg-void);
+    transform: translateX(-50%) rotate(115deg);
+  }
+#part-game .dial-label{
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 16px;
+    color: var(--ink-muted);
+    position:absolute;
+    bottom: -24px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+  }
+#part-game .timer-wrap{
+    display:flex;
+    align-items:baseline;
+    gap: 8px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+  }
+#part-game .timer-label{
+    font-size: 16px;
+    letter-spacing: 0.06em;
+    color: var(--ink-muted);
+    text-transform: uppercase;
+  }
+#part-game #timer{
+    font-size: clamp(22px, 3vw, 30px);
+    font-weight: 600;
+    color: var(--gold);
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 2px 12px;
+    min-width: 120px;
+    text-align:center;
+  }
+#part-game #timer.urgent{
+    color: var(--bg-void);
+    background: var(--coral);
+    border-color: var(--coral);
+    animation: pulse 1s ease-in-out infinite;
+  }
+@keyframes pulse{
+    0%,100%{ transform: scale(1); }
+    50%{ transform: scale(1.04); }
+  }
+@media (prefers-reduced-motion: reduce){#part-game #timer.urgent{ animation: none; }
+#part-game .dial::after{ transition: none; }
+#part-game .shake{ animation: none; }}
+#part-game .stage{
+    flex: 1;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    padding: 40px 20px 60px;
+  }
+#part-game .card{
+    width: 100%;
+    max-width: 640px;
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: clamp(24px, 5vw, 44px);
+    animation: rise .5s ease both;
+  }
+@keyframes rise{
+    from{ opacity:0; transform: translateY(10px); }
+    to{ opacity:1; transform: translateY(0); }
+  }
+@media (prefers-reduced-motion: reduce){#part-game .card{ animation: none; }}
+#part-game .eyebrow{
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 16px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin: 0 0 10px;
+  }
+#part-game h1.card-title{
+    font-family: Georgia, 'Times New Roman', serif;
+    font-weight: 700;
+    font-size: clamp(26px, 5vw, 36px);
+    line-height: 1.02;
+    margin: 0 0 18px;
+    text-transform: none;
+  }
+#part-game p.body-text{
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink-sand);
+    margin: 0 0 18px;
+  }
+#part-game .muted{ color: var(--ink-muted); }
+#part-game button{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    border-radius: 999px;
+    border: none;
+    padding: 13px 26px;
+    cursor: pointer;
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+#part-game button:hover{ transform: translateY(-1px); }
+#part-game button:active{ transform: translateY(0); }
+#part-game .btn-primary{
+    background: var(--gold);
+    color: var(--bg-void);
+  }
+#part-game .btn-primary:hover{ box-shadow: 0 6px 18px rgba(245,155,76,0.35); }
+#part-game .btn-secondary{
+    background: transparent;
+    color: var(--ink-sand);
+    border: 1px solid var(--line);
+  }
+#part-game .btn-secondary:hover{ box-shadow: 0 4px 14px rgba(0,0,0,0.25); }
+#part-game .btn-row{ display:flex; gap:12px; flex-wrap:wrap; margin-top: 6px; }
+#part-game .emoji-display{
+    background: var(--bg-void);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 26px;
+    text-align:center;
+    font-size: clamp(38px, 9vw, 56px);
+    letter-spacing: 0.15em;
+    margin-bottom: 20px;
+  }
+#part-game input[type="text"],#part-game input[type="number"]{
+    width: 100%;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 17px;
+    padding: 13px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: var(--bg-void);
+    color: var(--ink-sand);
+    margin-bottom: 14px;
+  }
+#part-game input::placeholder{ color: var(--ink-muted); }
+#part-game .feedback{
+    font-size: 16px;
+    margin: -4px 0 14px;
+    min-height: 20px;
+  }
+#part-game .feedback.bad{ color: var(--coral-text); }
+#part-game .feedback.good{ color: var(--teal); }
+#part-game .shake{ animation: shake .4s ease; }
+@keyframes shake{
+    0%,100%{ transform: translateX(0); }
+    20%{ transform: translateX(-6px); }
+    40%{ transform: translateX(6px); }
+    60%{ transform: translateX(-4px); }
+    80%{ transform: translateX(4px); }
+  }
+#part-game .word-board{
+    display:flex;
+    gap: 8px;
+    justify-content:center;
+    margin: 6px 0 24px;
+    flex-wrap: wrap;
+  }
+#part-game .letter-box{
+    width: 38px; height: 46px;
+    border-bottom: 3px solid var(--ink-muted);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:Georgia, 'Times New Roman', serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--gold);
+    transition: border-color .3s ease;
+  }
+#part-game .letter-box.filled{ border-color: var(--teal); }
+#part-game .trivia-list{ display:flex; flex-direction:column; gap:10px; margin-bottom: 20px; }
+#part-game .trivia-item{
+    background: var(--bg-void);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+#part-game .trivia-item.done{ opacity: 0.55; }
+#part-game .trivia-q{ font-size: 16px; margin-bottom: 8px; }
+#part-game .trivia-input-row{
+    display:flex;
+    gap: 8px;
+  }
+#part-game .trivia-input-row input[type="text"]{
+    margin-bottom: 0;
+    font-size: 16px;
+    padding: 9px 12px;
+  }
+#part-game .reveal-btn{
+    background: var(--bg-panel-raised);
+    color: var(--ink-sand);
+    border: 1px solid var(--line);
+    font-size: 16px;
+    padding: 8px 16px;
+    white-space: nowrap;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+#part-game .reveal-btn:disabled{ opacity: 0.4; cursor:not-allowed; }
+#part-game .trivia-feedback{
+    font-size: 16px;
+    margin-top: 6px;
+    min-height: 16px;
+  }
+#part-game .trivia-feedback.good{ color: var(--teal); }
+#part-game .trivia-feedback.bad{ color: var(--coral-text); }
+#part-game .locker-scene-wrap{
+    background: var(--bg-void);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 16px;
+  }
+#part-game .locker-image-container{
+    position: relative;
+    width: 100%;
+    line-height: 0;
+  }
+#part-game .locker-bg-image{
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 6px;
+  }
+#part-game .locker-hotspot{
+    position: absolute;
+    background: rgba(255,244,230,0);
+    border: 2px solid rgba(255,244,230,0);
+    border-radius: 10px;
+    cursor: pointer;
+    padding: 0;
+    transition: background .2s ease, border-color .2s ease;
+  }
+#part-game .locker-hotspot:hover,#part-game .locker-hotspot:focus-visible{
+    background: rgba(245,155,76,0.16);
+    border-color: var(--gold);
+    outline: none;
+  }
+#part-game .locker-hotspot.found{ border-color: var(--teal);
+    background: rgba(247,199,155,0.22);
+    border-color: var(--teal);
+    cursor: default;
+  }
+#part-game .locker-hotspot.wrong{
+    animation: item-shake .4s ease;
+  }
+@keyframes item-shake{
+    0%,100%{ transform: translateX(0); }
+    25%{ transform: translateX(-4px); }
+    75%{ transform: translateX(4px); }
+  }
+@media (prefers-reduced-motion: reduce){#part-game .locker-hotspot.wrong{ animation: none; }}
+#part-game .hotspot-tooltip{
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    background: var(--bg-panel-raised);
+    color: var(--ink-sand);
+    border: 1px solid var(--line);
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    white-space: nowrap;
+    padding: 6px 12px;
+    border-radius: 999px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .15s ease, transform .15s ease;
+    z-index: 5;
+  }
+#part-game .locker-hotspot:hover .hotspot-tooltip,#part-game .locker-hotspot:focus-visible .hotspot-tooltip{
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+  }
+#part-game .hotspot-check{ box-shadow: 0 0 0 2px var(--bg-void);
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--teal);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    color: var(--bg-void);
+    font-size: 16px;
+    font-weight: 700;
+  }
+#part-game .locker-hotspot.found .hotspot-check{ box-shadow: 0 0 0 2px var(--bg-void); display: flex; }
+#part-game .score-box{
+    background: var(--bg-void);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin: 4px 0 18px;
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+  }
+#part-game .score-box .big{ font-size: 34px; color: var(--gold); font-weight: 600; }
+#part-game .score-box .small{ font-size: 16px; color: var(--ink-muted); margin-top: 4px; }
+#part-game .count-readout{
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+    color: var(--ink-muted);
+    font-size: 16px;
+    margin-bottom: 16px;
+  }
+#part-game .count-readout b{ color: var(--gold); }
+#part-game .hint-link{
+    display:inline-block;
+    margin-top: 18px;
+    font-size: 16px;
+    color: var(--ink-muted);
+    text-decoration: underline;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+  }
+#part-game .hint-box{
+    margin-top: 10px;
+    font-size: 16px;
+    color: var(--ink-muted);
+    border-left: 2px solid var(--gold);
+    padding-left: 10px;
+    display:none;
+  }
+#part-game .hint-box.show{ display:block; }
+#part-game .closing-badge{
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 16px;
+    color: var(--teal);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+#part-game .sr-only{
+    position:absolute; width:1px; height:1px;
+    padding:0; margin:-1px; overflow:hidden;
+    clip: rect(0,0,0,0); white-space:nowrap; border:0;
+  }
+#part-game .card{
+    --bg-panel:#FFF4E6; --bg-void:#FBE3CC; --bg-panel-raised:#F6D3B3;
+    --ink-sand:#2B1018; --ink-muted:#6A3B38;
+    --gold:#A8391A; --coral:#B3261E; --coral-text:#B3261E; --teal:#7A4A00;
+    --line: rgba(43,16,24,0.22);
+    background: var(--bg-panel); color: var(--ink-sand);
+  }
+@media (max-width: 600px){#part-game .timer-wrap{ margin-top: 18px; }
+#part-game .dials{ gap: 34px; }}
+#part-brief{
+    --bg-void: #2B1018;
+    --bg-panel: #4F1422;
+    --bg-raised: #6B1D2E;
+    --ink: #FFF4E6;
+    --muted: #F2D3CB;
+    --amber: #F59B4C;
+    --rust: #C35726;
+    --wheat: #F7C79B;
+    --coral: #F28B6C;
+    --line: rgba(255,244,230,0.18);
+    --radius: 14px;
+  }
+#part-brief{
+    background: var(--bg-void);
+    color: var(--ink);
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    line-height: 1.55;
+  }
+#part-brief .banner{
+    position: sticky; top:0; z-index:10;
+    display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+    padding: 14px 22px;
+    background: linear-gradient(180deg, #4F1422, #2B1018);
+    border-bottom: 1px solid var(--line);
+  }
+#part-brief .banner-title{
+    font-family:Georgia, 'Times New Roman', serif; font-weight:700; text-transform: none;
+    letter-spacing:.02em; font-size: clamp(20px,3vw,28px); white-space:nowrap;
+  }
+#part-brief .banner-title span{ color: var(--amber); }
+#part-brief .steps{ display:flex; gap:18px; align-items:center; }
+#part-brief .step{ display:flex; flex-direction:column; align-items:center; gap:4px; font-family:Verdana, Geneva, Tahoma, sans-serif; font-size:16px; color: var(--muted); letter-spacing:.06em; text-transform:uppercase; }
+#part-brief .dot{
+    width:30px; height:30px; border-radius:50%;
+    border:2px solid var(--muted); background: var(--bg-panel);
+    display:flex; align-items:center; justify-content:center;
+    font-size:16px; font-weight:700; color: var(--muted);
+    transition: background .3s, border-color .3s, color .3s;
+  }
+#part-brief .step.done .dot{ background: var(--wheat); border-color: var(--wheat); color: var(--bg-void); }
+#part-brief main{ max-width: 760px; margin: 0 auto; padding: 36px 20px 80px; }
+#part-brief .card{
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: clamp(22px,4.5vw,40px);
+    margin-bottom: 26px;
+  }
+#part-brief .eyebrow{ font-family:Verdana, Geneva, Tahoma, sans-serif; font-size:16px; letter-spacing:.06em; text-transform:uppercase; color: var(--amber); margin:0 0 8px; }
+#part-brief h1,#part-brief h2{ font-family:Georgia, 'Times New Roman', serif; text-transform:none; font-weight:700; line-height:1.02; margin:0 0 14px; }
+#part-brief h1{ font-size: clamp(26px,5vw,38px); }
+#part-brief h2{ font-size: clamp(22px,4vw,30px); }
+#part-brief p{ margin: 0 0 14px; }
+#part-brief .muted{ color: var(--muted); }
+#part-brief .hint{ font-size: 16px; color: var(--muted); margin: -6px 0 12px; }
+#part-brief label.field,#part-brief .legend{
+    display:block; font-weight:600; font-size:16px; margin: 18px 0 6px;
+  }
+#part-brief input[type="text"],#part-brief textarea{
+    width:100%; font: inherit; font-size:16px; color: var(--ink);
+    background: var(--bg-void); border:1px solid var(--line); border-radius:8px;
+    padding: 12px 14px;
+  }
+#part-brief textarea{ min-height: 88px; resize: vertical; }
+#part-brief input::placeholder,#part-brief textarea::placeholder{ color: #C9A9A0; }
+#part-brief input[type="text"]:focus,#part-brief textarea:focus{ border-color: var(--amber); }
+#part-brief fieldset{ border:0; padding:0; margin:0; min-width:0; }
+#part-brief .types{ display:grid; gap:10px; margin-top:6px; }
+#part-brief .type{
+    position:relative; display:grid; grid-template-columns: 22px 1fr; gap: 4px 12px; align-items:start;
+    background: var(--bg-void); border:1px solid var(--line); border-radius:10px; padding: 12px 14px; cursor:pointer;
+  }
+#part-brief .type:hover{ border-color: var(--amber); }
+#part-brief .type input{ margin-top:4px; accent-color: var(--amber); width:18px; height:18px; }
+#part-brief .type b{ font-size:16px; }
+#part-brief .type .say{ font-style:italic; color: var(--ink); }
+#part-brief .type .best{ font-size:16px; color: var(--muted); }
+#part-brief .type:has(input:checked){ border-color: var(--wheat); background: rgba(247,199,155,0.12); }
+#part-brief .table-wrap{ overflow-x:auto; margin-top: 8px; }
+#part-brief table{ width:100%; border-collapse:collapse; min-width: 560px; }
+#part-brief th{ text-align:left; font-family:Verdana, Geneva, Tahoma, sans-serif; font-size:16px; letter-spacing:.08em; text-transform:uppercase; color: var(--amber); padding: 6px 6px 8px; }
+#part-brief td{ padding: 4px; vertical-align: top; }
+#part-brief td.rowhead{ font-weight:700; width: 70px; padding-top: 14px; white-space:nowrap; }
+#part-brief td input{ font-size:16px; padding: 10px 10px; }
+#part-brief .checks{ display:grid; grid-template-columns: repeat(auto-fit, minmax(210px,1fr)); gap:8px; margin-top:6px; }
+#part-brief .check{ display:flex; gap:10px; align-items:center; background: var(--bg-void); border:1px solid var(--line); border-radius:10px; padding: 10px 12px; cursor:pointer; }
+#part-brief .check input{ accent-color: var(--amber); width:18px; height:18px; }
+#part-brief .check:has(input:checked){ border-color: var(--wheat); background: rgba(247,199,155,0.12); }
+#part-brief button{ font-family:inherit; font-weight:600; font-size:16px; border-radius:999px; border:none; padding: 12px 24px; cursor:pointer; transition: transform .15s, box-shadow .15s; }
+#part-brief button:hover{ transform: translateY(-1px); }
+#part-brief .btn-primary{ background: var(--amber); color: var(--bg-void); }
+#part-brief .btn-primary:hover{ box-shadow: 0 6px 18px rgba(245,155,76,.35); }
+#part-brief .btn-secondary{ background:transparent; color: var(--ink); border:1px solid var(--line); }
+#part-brief .btn-row{ display:flex; gap:10px; flex-wrap:wrap; margin-top: 8px; }
+#part-brief details.example{ background: var(--bg-void); border:1px solid var(--line); border-radius:10px; padding: 12px 16px; margin: 4px 0 8px; }
+#part-brief details.example summary{ cursor:pointer; font-weight:600; color: var(--wheat); }
+#part-brief details.example dl{ margin: 12px 0 0; }
+#part-brief details.example dt{ font-family:Verdana, Geneva, Tahoma, sans-serif; font-size:16px; letter-spacing:.08em; text-transform:uppercase; color: var(--amber); margin-top: 10px; }
+#part-brief details.example dd{ margin: 2px 0 0; }
+#part-brief .prompt-box{ background: var(--bg-void); border:1px solid var(--line); border-radius:10px; padding: 16px 18px; margin: 8px 0 12px; }
+#part-brief .prompt-box h3{ margin:0 0 8px; font-size:16px; color: var(--wheat); }
+#part-brief .prompt-box pre{ white-space: pre-wrap; word-wrap: break-word; font-family:Verdana, Geneva, Tahoma, sans-serif; font-size: 16px; line-height:1.55; margin: 0 0 12px; color: var(--ink); }
+#part-brief .status{ font-size:16px; color: var(--wheat); min-height: 20px; }
+#part-brief ol.tips{ padding-left: 0; list-style:none; margin: 0; counter-reset: t; }
+#part-brief ol.tips li{ counter-increment: t; position:relative; padding-left: 40px; margin-bottom: 14px; }
+#part-brief ol.tips li::before{ content: counter(t); position:absolute; left:0; top:0; width:28px; height:28px; border-radius:50%; background: var(--amber); color: var(--bg-void); font-weight:700; display:flex; align-items:center; justify-content:center; }
+#part-brief footer{ text-align:center; color: var(--muted); font-size: 16px; padding: 0 20px 40px; }
+#part-brief .sr-only{ position:absolute; width:1px; height:1px; margin:-1px; padding:0; overflow:hidden; clip: rect(0,0,0,0); white-space:nowrap; border:0; }
+@media (prefers-reduced-motion: reduce){}
+@media print{#part-brief{ background:#fff; color:#000; }
+#part-brief .banner,#part-brief .btn-row,#part-brief details.example,#part-brief .no-print{ display:none !important; }
+#part-brief .card{ background:#fff; border:1px solid #999; break-inside: avoid; }
+#part-brief input,#part-brief textarea{ background:#fff; color:#000; border:1px solid #999; }
+#part-brief .eyebrow,#part-brief th,#part-brief .muted,#part-brief .hint{ color:#444; }
+#part-brief .prompt-box{ background:#fff; border:1px solid #999; }
+#part-brief .prompt-box pre{ color:#000; }}
+#part-brief .card{
+    --bg-panel:#FFF4E6; --bg-void:#FBE3CC; --bg-raised:#F6D3B3;
+    --ink:#2B1018; --muted:#6A3B38; --amber:#A8391A; --wheat:#8A2F10;
+    --line: rgba(43,16,24,0.22);
+    background: var(--bg-panel); color: var(--ink);
+  }
+#part-brief .card input::placeholder,#part-brief .card textarea::placeholder{ color:#8A6A66; }
+#part-brief .card .type:has(input:checked),#part-brief .card .check:has(input:checked){ background: rgba(168,57,26,0.10); border-color: var(--amber); }
+#part-brief .card details.example summary{ color: var(--amber); }
+
+#part-brief .bscreen{display:none}
+#part-brief .bscreen.on{display:block}
+#part-brief .bnav{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:28px;padding-top:20px;border-top:1px solid var(--line);flex-wrap:wrap}
+#part-brief .bcount{font-size:16px;color:var(--muted)}
+#part-brief .step.now .dot{border-color:var(--amber);box-shadow:0 0 0 3px rgba(245,155,76,.55)}
+@media print{#part-brief .bscreen{display:block !important}#part-brief .bnav{display:none}
+#part-brief.print-prompts .bscreen:not([data-screen="4"]){display:none !important}
+#part-brief .prompt-box pre{white-space:pre-wrap;color:#000}}
+#part-brief .check input[type="checkbox"]{flex:0 0 18px;width:18px;height:18px;margin:0}
+</style>
+</head>
+<body>
+
+<div id="part-game">
+
+
+<div class="banner">
+  <div class="banner-title">One More <span>Hour</span></div>
+  <div class="dials" aria-hidden="false">
+    <div class="dial" id="dial-1" role="img" aria-label="Vault: locked"><span class="dial-label">VAULT</span></div>
+    <div class="dial" id="dial-2" role="img" aria-label="Safe: locked"><span class="dial-label">SAFE</span></div>
+    <div class="dial" id="dial-3" role="img" aria-label="Box: locked"><span class="dial-label">BOX</span></div>
+  </div>
+  <div class="timer-wrap">
+    <span class="timer-label">Time left</span>
+    <span id="timer" aria-hidden="true">15:00</span>
+    <span class="sr-only" id="timer-announce" role="status" aria-live="polite"></span>
+  </div>
+</div>
+
+<div class="stage">
+
+  <!-- OPENING -->
+  <div class="card" id="screen-opening">
+    <p class="eyebrow">Briefing</p>
+    <h1 class="card-title">One More Hour</h1>
+    <p class="body-text">Somewhere in a windowless office, a system known only as <b>the Calendar</b> has locked away the extra hour that fall gives back, so the clocks roll on exactly as scheduled. No delays. No grace period. Not one spare minute.</p>
+    <p class="body-text">Your crew has one shot: break three seals before the countdown runs out, and take the hour back.</p>
+    <p class="body-text muted">Three rooms. One crew. Playing together, call out answers as a group. Playing alone, you are the whole crew.</p>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="startHeist()">Begin the Job</button>
+    </div>
+    <p class="body-text muted" style="margin-top:18px;">Already played it? <a class="inline-link" href="#brief">Skip to the design brief</a></p>
+  </div>
+
+  <!-- ROOM 1: VAULT -->
+  <div class="card" id="screen-room1" style="display:none;">
+    <p class="eyebrow">Room One: The Vault</p>
+    <h1 class="card-title">Crack the Door</h1>
+    <p class="body-text">The Calendar speaks only in symbols. Decode the message on the vault door to unlock it.</p>
+    <div class="emoji-display" aria-label="Symbol puzzle: number one, plus sign, clock">1️⃣ ➕ 🕐</div>
+    <label class="sr-only" for="room1-input">Type the decoded phrase</label>
+    <input type="text" id="room1-input" placeholder="Type the decoded phrase..." autocomplete="off">
+    <div class="feedback" id="room1-feedback" aria-live="polite"></div>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="checkRoom1()">Unlock the Vault</button>
+    </div>
+    <button class="hint-link" onclick="toggleHint('hint1')">Need a nudge?</button>
+    <div class="hint-box" id="hint1">Read each symbol as a word, in order: a number, an operation, and a unit of time. Fall gives one back.</div>
+  </div>
+
+  <!-- ROOM 2: SAFE -->
+  <div class="card" id="screen-room2" style="display:none;">
+    <p class="eyebrow">Room Two: The Safe</p>
+    <h1 class="card-title">Read the Fine Print</h1>
+    <p class="body-text">The safe only opens for a crew who knows their stuff. Type the answer to each question and hit check, correct answers reveal letters. Call the word the second you know it.</p>
+
+    <div class="word-board" id="word-board" aria-live="polite"></div>
+
+    <div class="trivia-list" id="trivia-list"></div>
+
+    <p class="body-text muted" style="font-size:16px; margin-top:-6px;">Know it already? Type it below.</p>
+    <label class="sr-only" for="room2-input">Type the safe's unlock word</label>
+    <input type="text" id="room2-input" placeholder="Type the word..." autocomplete="off">
+    <div class="feedback" id="room2-feedback" aria-live="polite"></div>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="checkRoom2()">Unlock the Safe</button>
+    </div>
+  </div>
+
+  <!-- ROOM 3: THE BOX -->
+  <div class="card" id="screen-room3" style="display:none;">
+    <p class="eyebrow">Room Three: The Box</p>
+    <h1 class="card-title">Sort the Box</h1>
+    <p class="body-text">One box left. Fall is here and the box is a mess. Click on everything that belongs to fall, not summer.</p>
+
+    <div class="locker-scene-wrap">
+      <div class="locker-image-container" id="locker-image-container">
+        <svg viewBox="0 0 1619 971" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="An open wooden crate seen from above holding eight items: a striped scarf, a pumpkin, a mug of hot cider, a football, a bottle of sunscreen, a beach ball, an ice cream cone, and a pair of flip-flops." class="locker-bg-image"><polygon points="250,45 1380,45 1320,200 305,200" fill="#A8895B"/><polygon points="300,70 1330,70 1320,92 308,92" fill="#9A7C50"/><polygon points="300,125 1325,125 1320,147 305,147" fill="#9A7C50"/><polygon points="225,38 298,200 215,805 105,805" fill="#C9AE80"/><polygon points="225,38 262,38 330,200 298,200" fill="#E0CAA0"/><polygon points="1388,38 1500,805 1400,805 1320,200" fill="#B79A6C"/><polygon points="1388,38 1352,38 1318,200 1320,200" fill="#D9C197"/><polygon points="305,200 1320,200 1400,805 215,805" fill="#2B1018"/><polygon points="108,795 1505,795 1505,918 108,918" fill="#D3BA90"/><rect x="108" y="795" width="1397" height="22" fill="#E3CFA8"/><line x1="108" y1="858" x2="1505" y2="858" stroke="#B89A6A" stroke-width="3"/><rect x="690" y="838" width="250" height="40" rx="20" fill="#6F5535"/><circle cx="150" cy="830" r="9" fill="#A98B5D"/><circle cx="1465" cy="830" r="9" fill="#A98B5D"/><circle cx="150" cy="895" r="9" fill="#A98B5D"/><circle cx="1465" cy="895" r="9" fill="#A98B5D"/><g transform="translate(480,345) rotate(25)"><rect x="-150" y="-75" width="60" height="150" fill="#C35726"/><rect x="-90" y="-75" width="60" height="150" fill="#FFF4E6"/><rect x="-30" y="-75" width="60" height="150" fill="#B5471A"/><rect x="30" y="-75" width="60" height="150" fill="#F59B4C"/><rect x="90" y="-75" width="60" height="150" fill="#C35726"/><rect x="-150" y="-75" width="300" height="150" fill="none" stroke="#7A2E10" stroke-width="3"/><line x1="150" y1="-70" x2="178" y2="-70" stroke="#FFF4E6" stroke-width="5" stroke-linecap="round"/><line x1="150" y1="-60" x2="178" y2="-60" stroke="#FFF4E6" stroke-width="5" stroke-linecap="round"/><line x1="150" y1="-50" x2="178" y2="-50" stroke="#FFF4E6" stroke-width="5" stroke-linecap="round"/><line x1="150" y1="-40" x2="178" y2="-40" stroke="#FFF4E6" stroke-width="5" stroke-linecap="round"/><line x1="150" y1="-30" x2="178" y2="-30" stroke="#FFF4E6" stroke-width="5" stroke-linecap="round"/><line x1="150" y1="-20" x2="178" y2="-20" stroke="#FFF4E6" stroke-width="5" stroke-linecap="round"/><line x1="150" y1="-10" x2="178" y2="-10" stroke="#FFF4E6" stroke-width="5" stroke-linecap="round"/><line x1="150" y1="0" x2="178" y2="0" stroke="#FFF4E6" stroke-width="5" stroke-linecap="round"/><line x1="150" y1="10" x2="178" y2="10" stroke="#FFF4E6" stroke-width="5" stroke-linecap="round"/><line x1="150" y1="20" x2="178" y2="20" stroke="#FFF4E6" stroke-width="5" stroke-linecap="round"/><line x1="150" y1="30" x2="178" y2="30" stroke="#FFF4E6" stroke-width="5" stroke-linecap="round"/><line x1="150" y1="40" x2="178" y2="40" stroke="#FFF4E6" stroke-width="5" stroke-linecap="round"/><line x1="150" y1="50" x2="178" y2="50" stroke="#FFF4E6" stroke-width="5" stroke-linecap="round"/><line x1="150" y1="60" x2="178" y2="60" stroke="#FFF4E6" stroke-width="5" stroke-linecap="round"/><line x1="150" y1="70" x2="178" y2="70" stroke="#FFF4E6" stroke-width="5" stroke-linecap="round"/></g><g transform="translate(810,340)"><ellipse cx="-70" cy="0" rx="65" ry="98" fill="#D9601E"/><ellipse cx="70" cy="0" rx="65" ry="98" fill="#D9601E"/><ellipse cx="-35" cy="0" rx="55" ry="104" fill="#F0701F"/><ellipse cx="35" cy="0" rx="55" ry="104" fill="#F0701F"/><ellipse cx="0" cy="0" rx="48" ry="106" fill="#F28A3F"/><path d="M-6 -104 q4 -40 20 -52" stroke="#5A3A1A" stroke-width="22" fill="none" stroke-linecap="round"/><path d="M14 -120 q50 -20 62 12 q-40 18 -62 -12z" fill="#B5651D"/></g><rect x="1020" y="190" width="110" height="172" rx="30" fill="#F59B4C"/><rect x="1048" y="140" width="54" height="58" rx="10" fill="#C35726"/><circle cx="1075" cy="282" r="22" fill="#C35726"/><line x1="1105" y1="282" x2="1115" y2="282" stroke="#C35726" stroke-width="5" stroke-linecap="round"/><line x1="1096" y1="303" x2="1103" y2="310" stroke="#C35726" stroke-width="5" stroke-linecap="round"/><line x1="1075" y1="312" x2="1075" y2="322" stroke="#C35726" stroke-width="5" stroke-linecap="round"/><line x1="1054" y1="303" x2="1047" y2="310" stroke="#C35726" stroke-width="5" stroke-linecap="round"/><line x1="1045" y1="282" x2="1035" y2="282" stroke="#C35726" stroke-width="5" stroke-linecap="round"/><line x1="1054" y1="261" x2="1047" y2="254" stroke="#C35726" stroke-width="5" stroke-linecap="round"/><line x1="1075" y1="252" x2="1075" y2="242" stroke="#C35726" stroke-width="5" stroke-linecap="round"/><line x1="1096" y1="261" x2="1103" y2="254" stroke="#C35726" stroke-width="5" stroke-linecap="round"/><g><path d="M1230 430 L1230.0 332.0 A98 98 0 0 1 1314.9 381.0Z" fill="#C35726"/><path d="M1230 430 L1314.9 381.0 A98 98 0 0 1 1314.9 479.0Z" fill="#FFF4E6"/><path d="M1230 430 L1314.9 479.0 A98 98 0 0 1 1230.0 528.0Z" fill="#8A2F2A"/><path d="M1230 430 L1230.0 528.0 A98 98 0 0 1 1145.1 479.0Z" fill="#F59B4C"/><path d="M1230 430 L1145.1 479.0 A98 98 0 0 1 1145.1 381.0Z" fill="#FFF4E6"/><path d="M1230 430 L1145.1 381.0 A98 98 0 0 1 1230.0 332.0Z" fill="#C35726"/><circle cx="1230" cy="430" r="98" fill="none" stroke="#7A5A2A" stroke-width="3"/><circle cx="1230" cy="430" r="14" fill="#FFF4E6" stroke="#7A5A2A" stroke-width="3"/></g><g><path d="M300 600 h170 v95 a45 45 0 0 1 -45 45 h-80 a45 45 0 0 1 -45 -45z" fill="#FFF4E6"/><path d="M470 625 a38 38 0 0 1 0 78" fill="none" stroke="#FFF4E6" stroke-width="22"/><ellipse cx="385" cy="602" rx="85" ry="16" fill="#C97B3A"/><path d="M300 668 h170" stroke="#C35726" stroke-width="12"/><line x1="350" y1="595" x2="440" y2="560" stroke="#8C4A2F" stroke-width="10" stroke-linecap="round"/><path d="M350 575 q-18 -22 0 -40 M395 570 q-18 -22 0 -40 M435 575 q-18 -22 0 -40" fill="none" stroke="#F2D3CB" stroke-width="7" stroke-linecap="round"/></g><polygon points="605,650 715,650 660,792" fill="#D9A560"/><path d="M620 668 L690 668 M635 695 L685 695 M648 725 L672 725" stroke="#B3813E" stroke-width="5"/><circle cx="660" cy="612" r="58" fill="#E7A3A0"/><path d="M606 640 q54 36 108 0 v14 h-108z" fill="#E7A3A0"/><circle cx="660" cy="560" r="14" fill="#C35726"/><g transform="translate(905,655) rotate(-22)"><ellipse rx="102" ry="58" fill="#8B4A2B"/><path d="M-62 -52 q-14 52 0 104" fill="none" stroke="#FFF4E6" stroke-width="9"/><path d="M62 -52 q14 52 0 104" fill="none" stroke="#FFF4E6" stroke-width="9"/><line x1="-36" y1="0" x2="36" y2="0" stroke="#FFF4E6" stroke-width="7" stroke-linecap="round"/><line x1="-24" y1="-12" x2="-24" y2="12" stroke="#FFF4E6" stroke-width="6" stroke-linecap="round"/><line x1="-8" y1="-12" x2="-8" y2="12" stroke="#FFF4E6" stroke-width="6" stroke-linecap="round"/><line x1="8" y1="-12" x2="8" y2="12" stroke="#FFF4E6" stroke-width="6" stroke-linecap="round"/><line x1="24" y1="-12" x2="24" y2="12" stroke="#FFF4E6" stroke-width="6" stroke-linecap="round"/></g><ellipse cx="1100" cy="672" rx="50" ry="108" fill="#8A2F2A"/><path d="M1100 600 L1074 668 M1100 600 L1126 668" stroke="#C35726" stroke-width="12" stroke-linecap="round" fill="none"/><ellipse cx="1230" cy="672" rx="50" ry="108" fill="#8A2F2A"/><path d="M1230 600 L1204 668 M1230 600 L1256 668" stroke="#C35726" stroke-width="12" stroke-linecap="round" fill="none"/></svg>
+      </div>
+    </div>
+
+    <div class="count-readout">Found: <b id="fall-count">0</b> of 4</div>
+    <div class="feedback" id="room3-feedback" aria-live="polite"></div>
+    <div class="btn-row"><button class="btn-primary" id="see-result" style="display:none;" onclick="showResult()">See your result</button></div>
+
+    <button class="hint-link" onclick="toggleHint('hint3')">Need a nudge?</button>
+    <div class="hint-box" id="hint3">Think about what you would reach for on a cool, crisp morning, not at the beach.</div>
+  </div>
+
+  <!-- CLOSING -->
+  <div class="card" id="screen-closing" style="display:none;">
+    <p class="closing-badge">✓ Vault. ✓ Safe. ✓ Box.</p>
+    <h1 class="card-title">One More Hour, Reclaimed.</h1>
+    <p class="body-text">The vault is cracked, the safe is open, the box is sorted. Your crew just did, in a few minutes, what we want every course activity to do: real thinking, real stakes, and a result that shows up where it counts.</p>
+    <div class="score-box" role="status" aria-live="polite">
+      <div class="big" id="score-value">100</div>
+      <div class="small" id="score-note"></div>
+    </div>
+    <p class="body-text">Ready to design one for your own course? Make three decisions on the design brief next.</p>
+    <div class="btn-row"><a class="btn-primary" id="brief-link" href="#brief" style="display:inline-block; text-decoration:none; padding:13px 26px; border-radius:999px; font-weight:600;">Open the design brief</a></div>
+    <p class="body-text muted" style="margin-top:16px;">You can close this window when you are ready. Nothing moves on until you do.</p>
+  </div>
+
+</div>
+
+
+</div>
+
+<div id="part-brief" class="is-hidden">
+
+
+<div class="banner">
+  <div class="banner-title">Your Design <span>Brief</span></div>
+  <a class="navlink" href="#activity">Play the activity</a>
+  <div class="steps" role="list" aria-label="Progress through the three decisions">
+    <div class="step" id="st1" role="listitem"><div class="dot">1</div>Concept</div>
+    <div class="step" id="st2" role="listitem"><div class="dot">2</div>Success</div>
+    <div class="step" id="st3" role="listitem"><div class="dot">3</div>Context</div>
+  </div>
+</div>
+
+<main>
+
+  <section class="card bscreen on" data-screen="0" aria-labelledby="intro-h">
+    <p class="eyebrow">After the activity</p>
+    <h1 id="intro-h">From Concept to Graded Activity</h1>
+    <p>You just played One More Hour. Before AI built anything, three decisions shaped it. Make the same three decisions for a concept in your own course, and you will have a brief that is specific enough to hand to AI.</p>
+    <p class="muted">No AI yet. Your answers save in this browser as you type.</p>
+    <details class="example">
+      <summary>See how One More Hour answered the three decisions</summary>
+      <dl>
+        <dt>1. The concept</dt>
+        <dd>Telling fall things from summer things. Activity type: sort and classify, with a decode step and a reveal step.</dd>
+        <dt>2. Success</dt>
+        <dd>A student who gets it can sort every item into the right season, and cannot win by clicking at random because wrong choices cost points.</dd>
+        <dt>3. Context</dt>
+        <dd>Plays alone online or as a group in class. Graded in the LMS: 100 minus 5 for each wrong attempt, passed at 70 or higher. Packaged as SCORM so the score reaches the gradebook.</dd>
+      </dl>
+    </details>
+  <div class="bnav no-print"><button type="button" class="btn-secondary" data-go="-1" style="visibility:hidden">Back</button><span class="bcount">1 of 6</span><button type="button" class="btn-primary" data-go="1">Start with Decision 1</button></div>
+  </section>
+
+  <!-- DECISION 1 -->
+  <section class="card bscreen" data-screen="1" aria-labelledby="d1-h">
+    <p class="eyebrow">Decision 1</p>
+    <h2 id="d1-h">What concept do students keep missing?</h2>
+
+    <label class="field" for="course">My course or discipline</label>
+    <input type="text" id="course" data-save placeholder="For example: Introductory Financial Accounting">
+
+    <label class="field" for="unit">The unit or assignment it belongs to</label>
+    <input type="text" id="unit" data-save placeholder="For example: Unit 3, adjusting entries">
+
+    <fieldset>
+      <legend class="legend">Choose an activity type</legend>
+      <p class="hint">Pick the one that matches what a student must do with the concept.</p>
+      <div class="types" id="types"></div>
+    </fieldset>
+
+    <label class="field" for="concept">The ONE concept students keep missing</label>
+    <textarea id="concept" data-save placeholder="Finish the sentence: my students just aren't getting ..."></textarea>
+  <div class="bnav no-print"><button type="button" class="btn-secondary" data-go="0">Back</button><span class="bcount">2 of 6</span><button type="button" class="btn-primary" data-go="2">Continue to Decision 2</button></div>
+  </section>
+
+  <!-- DECISION 2 -->
+  <section class="card bscreen" data-screen="2" aria-labelledby="d2-h">
+    <p class="eyebrow">Decision 2</p>
+    <h2 id="d2-h">What can a student who gets it do?</h2>
+    <p class="hint">Write success as an action: sort, decide, explain, predict. That action is what the activity must require.</p>
+
+    <label class="field" for="success">A student who gets it can ...</label>
+    <input type="text" id="success" data-save placeholder="For example: decide which accounts an adjusting entry affects">
+
+    <fieldset>
+      <legend class="legend">How will the result be recorded? Choose all that apply.</legend>
+      <div class="checks" id="records"></div>
+    </fieldset>
+
+    <div class="legend" id="steps-legend">Break it down into steps</div>
+    <div class="table-wrap">
+      <table aria-labelledby="steps-legend">
+        <thead><tr><th scope="col"><span class="sr-only">Step</span></th><th scope="col">What the student does</th><th scope="col">What counts as correct</th><th scope="col">Points or completion</th></tr></thead>
+        <tbody id="steps-body"></tbody>
+      </table>
+    </div>
+    <div class="btn-row no-print">
+      <button type="button" class="btn-secondary" id="addstep">Add a step</button>
+      <button type="button" class="btn-secondary" id="rmstep">Remove last step</button>
+    </div>
+  <div class="bnav no-print"><button type="button" class="btn-secondary" data-go="1">Back</button><span class="bcount">3 of 6</span><button type="button" class="btn-primary" data-go="3">Continue to Decision 3</button></div>
+  </section>
+
+  <!-- DECISION 3 -->
+  <section class="card bscreen" data-screen="3" aria-labelledby="d3-h">
+    <p class="eyebrow">Decision 3</p>
+    <h2 id="d3-h">Where does it live, and what does it count for?</h2>
+
+    <label class="field" for="inclass">In class (projected or in groups)</label>
+    <textarea id="inclass" data-save placeholder="Optional. For example: projected on the screen, teams call out answers."></textarea>
+
+    <fieldset>
+      <legend class="legend">In the LMS: how students reach it. Choose all that apply.</legend>
+      <div class="checks" id="checks"></div>
+    </fieldset>
+
+    <label class="field" for="where">Where students open it (optional detail)</label>
+    <input type="text" id="where" data-save placeholder="For example: a page in the Unit 3 module">
+  <div class="bnav no-print"><button type="button" class="btn-secondary" data-go="2">Back</button><span class="bcount">4 of 6</span><button type="button" class="btn-primary" data-go="4">Turn it into a prompt</button></div>
+  </section>
+
+  <!-- AI -->
+  <section class="card bscreen" data-screen="4" aria-labelledby="ai-h" id="ai">
+    <p class="eyebrow">Take it to AI</p>
+    <h2 id="ai-h">Your brief is now a prompt</h2>
+    <p>These two prompts update as you type. Paste the first into Claude (or your AI tool). Read the draft as a student, ask for one change, then use the second to package it.</p>
+
+    <div class="prompt-box">
+      <h3>1. Build the activity</h3>
+      <pre id="prompt1"></pre>
+      <div class="btn-row"><button class="btn-primary" data-copy="prompt1">Copy prompt 1</button></div>
+    </div>
+
+    <div class="prompt-box">
+      <h3>2. Package for my LMS</h3>
+      <pre id="prompt2"></pre>
+      <div class="btn-row"><button class="btn-primary" data-copy="prompt2">Copy prompt 2</button></div>
+    </div>
+
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+
+    <div class="btn-row no-print">
+      <button type="button" class="btn-primary" id="copyboth">Copy both prompts</button>
+      <button type="button" class="btn-secondary" id="printprompts">Print or save the prompts as PDF</button>
+    </div>
+    <div class="btn-row no-print">
+      <button type="button" class="btn-secondary" id="printall">Print my whole brief</button>
+      <button class="btn-secondary" id="clear">Clear my answers</button>
+    </div>
+  <div class="bnav no-print"><button type="button" class="btn-secondary" data-go="3">Back</button><span class="bcount">5 of 6</span><button type="button" class="btn-primary" data-go="5">Continue to the tips</button></div>
+  </section>
+
+  <section class="card bscreen" data-screen="5" aria-labelledby="tips-h">
+    <p class="eyebrow">Before you go live</p>
+    <h2 id="tips-h">Four tips</h2>
+    <ol class="tips">
+      <li><b>Prompt for accessibility.</b> Ask for WCAG 2.1 AA from the start. Retrofitting accessibility is much harder than building it in.</li>
+      <li><b>Test and revise.</b> The first output is a draft. Play it as a student, check what reaches the gradebook, then have a real student try it. Plan at least one revision round.</li>
+      <li><b>Control your SCORM ending.</b> Tell the AI to hold on the final screen instead of rolling to a completion slide. Students stay in the activity until they are ready to exit.</li>
+      <li><b>Balance multiple choice answers.</b> On multiple choice questions, tell the AI to make the answer choices similar in length so the longest answer is not always the correct one, and to shuffle the correct answer across all of the letter choices (A, B, C and D).</li>
+    </ol>
+  <div class="bnav no-print"><button type="button" class="btn-secondary" data-go="4">Back</button><span class="bcount">6 of 6</span><a class="btn-secondary" href="#activity" style="text-decoration:none;display:inline-block">Play the activity again</a></div>
+  </section>
+
+</main>
+
+<footer>Jennifer Coon, CIA, CFE &middot; Professor of Accounting &middot; Tyler Junior College &middot; Teaching Professor Online Conference 2026</footer>
+
+
+</div>
+
+<script>
+
+  // ---------- Timer ----------
+  let totalSeconds = 15 * 60;
+  let timerInterval = null;
+  let urgentAnnounced = false;
+  const timerEl = document.getElementById('timer');
+  const timerAnnounceEl = document.getElementById('timer-announce');
+
+  function formatTime(s){
+    const m = Math.floor(s/60);
+    const sec = s % 60;
+    return `${m}:${sec.toString().padStart(2,'0')}`;
+  }
+
+  function startHeist(){
+    swap('screen-opening','screen-room1');
+    if(timerInterval) return;
+    timerInterval = setInterval(()=>{
+      totalSeconds--;
+      if(totalSeconds <= 0){
+        totalSeconds = 0;
+        timerEl.textContent = "0:00";
+        clearInterval(timerInterval);
+        timerAnnounceEl.textContent = "Time's up.";
+        return;
+      }
+      timerEl.textContent = formatTime(totalSeconds);
+      if(totalSeconds <= 180){
+        timerEl.classList.add('urgent');
+        if(!urgentAnnounced){
+          urgentAnnounced = true;
+          timerAnnounceEl.textContent = "Less than three minutes remaining.";
+        }
+      }
+    }, 1000);
+  }
+
+  function swap(fromId, toId){
+    document.getElementById(fromId).style.display = 'none';
+    document.getElementById(toId).style.display = 'block';
+    document.getElementById(toId).scrollIntoView({behavior:'smooth', block:'start'});
+  }
+
+  function solveDial(n){
+    const d = document.getElementById('dial-'+n);
+    d.classList.add('solved');
+    d.setAttribute('aria-label', d.querySelector('.dial-label').textContent + ': unlocked');
+  }
+
+  function toggleHint(id){
+    document.getElementById(id).classList.toggle('show');
+  }
+
+  function normalize(str){
+    return str.toLowerCase().replace(/[^a-z0-9]/g,'');
+  }
+
+  // ---------- Room 1 ----------
+  function checkRoom1(){
+    const val = normalize(document.getElementById('room1-input').value);
+    const accepted = ['onemorehour','1morehour'];
+    const fb = document.getElementById('room1-feedback');
+    if(accepted.includes(val)){
+      fb.textContent = "Vault cracked. One more hour, secured.";
+      fb.className = "feedback good";
+      solveDial(1);
+      setTimeout(()=> swap('screen-room1','screen-room2'), 1400);
+    } else {
+      misses++;
+      fb.textContent = "Not quite. Look at each symbol again.";
+      fb.className = "feedback bad";
+      const card = document.getElementById('screen-room1');
+      card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
+    }
+  }
+
+  // ---------- Room 2: Hangman ----------
+  const targetWord = "PUMPKIN";
+  const revealed = new Array(targetWord.length).fill(false);
+  const questions = [
+    { q: "Which season comes right before winter?", a: ["AUTUMN","FALL"], letters:[0,3] },      // P _ _ P _ _ _
+    { q: "What fruit a day keeps the doctor away?", a: ["APPLE"], letters:[1] },               // U
+    { q: "What tool do you use to gather fallen leaves?", a: ["RAKE"], letters:[2] },           // M
+    { q: "What bird is the star of the Thanksgiving table?", a: ["TURKEY"], letters:[4] },      // K
+    { q: "When the clocks fall back, how many hours do you gain?", a: ["ONE","1"], letters:[5] }, // I
+    { q: "What holiday falls on October 31?", a: ["HALLOWEEN"], letters:[6] },                  // N
+  ];
+
+  function renderWordBoard(){
+    const board = document.getElementById('word-board');
+    board.innerHTML = '';
+    for(let i=0;i<targetWord.length;i++){
+      const box = document.createElement('div');
+      box.className = 'letter-box' + (revealed[i] ? ' filled' : '');
+      box.textContent = revealed[i] ? targetWord[i] : '';
+      board.appendChild(box);
+    }
+  }
+
+  function renderTrivia(){
+    const list = document.getElementById('trivia-list');
+    list.innerHTML = '';
+    questions.forEach((item, idx)=>{
+      const row = document.createElement('div');
+      row.className = 'trivia-item';
+      row.id = 'trivia-'+idx;
+      row.innerHTML = `
+        <div class="trivia-body">
+          <div class="trivia-q" id="trivia-q-${idx}">${item.q}</div>
+          <div class="trivia-input-row">
+            <label class="sr-only" for="trivia-input-${idx}">Answer: ${item.q}</label>
+            <input type="text" id="trivia-input-${idx}" placeholder="Type the answer..." autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();checkTrivia(${idx});}">
+            <button class="reveal-btn" id="trivia-btn-${idx}" onclick="checkTrivia(${idx})">Check</button>
+          </div>
+          <div class="trivia-feedback" id="trivia-fb-${idx}" aria-live="polite"></div>
+        </div>
+      `;
+      list.appendChild(row);
+    });
+  }
+
+  function normalizeLoose(str){
+    return str.toLowerCase().trim().replace(/[^a-z0-9]/g,'');
+  }
+
+  function checkTrivia(idx){
+    const item = questions[idx];
+    const input = document.getElementById('trivia-input-'+idx);
+    const fb = document.getElementById('trivia-fb-'+idx);
+    const val = normalizeLoose(input.value);
+    if(item.a.some(x => normalizeLoose(x) === val || (x==='1' && val==='1'))){
+      fb.textContent = "Correct, letter" + (item.letters.length>1?'s':'') + " revealed.";
+      fb.className = "trivia-feedback good";
+      input.disabled = true;
+      document.getElementById('trivia-btn-'+idx).disabled = true;
+      document.getElementById('trivia-btn-'+idx).textContent = "Revealed";
+      document.getElementById('trivia-'+idx).classList.add('done');
+      revealLetters(idx);
+    } else {
+      misses++;
+      fb.textContent = "Not quite, try again.";
+      fb.className = "trivia-feedback bad";
+    }
+  }
+
+  function revealLetters(idx){
+    const item = questions[idx];
+    item.letters.forEach(i => revealed[i] = true);
+    renderWordBoard();
+  }
+
+  function checkRoom2(){
+    const val = normalize(document.getElementById('room2-input').value);
+    const fb = document.getElementById('room2-feedback');
+    if(val === normalize(targetWord)){
+      fb.textContent = "Safe's open. Nicely done.";
+      fb.className = "feedback good";
+      solveDial(2);
+      setTimeout(()=> swap('screen-room2','screen-room3'), 1400);
+    } else {
+      misses++;
+      fb.textContent = "Not the word yet, keep revealing.";
+      fb.className = "feedback bad";
+    }
+  }
+
+  // ---------- Room 3: Sort the box (image hotspots) ----------
+  // Positions are pixels in the 1619 x 971 artwork, converted to percentages.
+  const IMG_W = 1619, IMG_H = 971;
+  const lockerItems = [
+    { key:"scarf",     name:"Striped scarf",   fall:true,  x:312,  y:213, w:336, h:264 },
+    { key:"pumpkin",   name:"Pumpkin",         fall:true,  x:675,  y:190, w:270, h:260 },
+    { key:"sunscreen", name:"Sunscreen",       fall:false, x:1015, y:135, w:120, h:230 },
+    { key:"beach",     name:"Beach ball",      fall:false, x:1130, y:330, w:200, h:200 },
+    { key:"cider",     name:"Hot cider",       fall:true,  x:285,  y:530, w:235, h:215 },
+    { key:"icecream",  name:"Ice cream cone",  fall:false, x:595,  y:520, w:130, h:275 },
+    { key:"football",  name:"Football",        fall:true,  x:800,  y:570, w:210, h:170 },
+    { key:"flipflops", name:"Flip-flops",      fall:false, x:1045, y:560, w:240, h:230 },
+  ];
+  let foundCount = 0;
+
+  function renderLocker(){
+    const container = document.getElementById('locker-image-container');
+    lockerItems.forEach(item=>{
+      const btn = document.createElement('button');
+      btn.type = "button";
+      btn.className = "locker-hotspot";
+      btn.id = "locker-item-" + item.key;
+      btn.style.left = (item.x / IMG_W * 100) + "%";
+      btn.style.top = (item.y / IMG_H * 100) + "%";
+      btn.style.width = (item.w / IMG_W * 100) + "%";
+      btn.style.height = (item.h / IMG_H * 100) + "%";
+      btn.setAttribute("aria-label", item.name);
+      btn.setAttribute("aria-pressed", "false");
+      btn.innerHTML = `
+        <span class="hotspot-tooltip">${item.name}</span>
+        <span class="hotspot-check" aria-hidden="true">✓</span>
+      `;
+      btn.addEventListener("click", ()=> handleItemClick(item));
+      container.appendChild(btn);
+    });
+    // Escape dismisses any open tooltip (WCAG 1.4.13)
+    container.addEventListener("keydown", (e)=>{
+      if(e.key === "Escape" && document.activeElement && document.activeElement.classList.contains('locker-hotspot')){
+        document.activeElement.blur();
+      }
+    });
+  }
+
+  function handleItemClick(item){
+    const btn = document.getElementById('locker-item-' + item.key);
+    if(btn.classList.contains('found')) return;
+    const fb = document.getElementById('room3-feedback');
+    if(item.fall){
+      btn.classList.add('found');
+      btn.setAttribute('aria-pressed','true');
+      foundCount++;
+      document.getElementById('fall-count').textContent = foundCount;
+      if(foundCount < 4){
+        fb.textContent = "Found it. " + item.name + " belongs to fall. Keep going.";
+        fb.className = "feedback good";
+      } else {
+        fb.textContent = "Box sorted. All four fall items found. The extra hour is yours.";
+        fb.className = "feedback good";
+        solveDial(3);
+        clearInterval(timerInterval);
+        const b = document.getElementById('see-result');
+        b.style.display = 'inline-block';
+        b.focus();
+      }
+    } else {
+      misses++;
+      btn.classList.remove('wrong'); void btn.offsetWidth; btn.classList.add('wrong');
+      fb.textContent = "That one belongs to summer, not fall. Try again.";
+      fb.className = "feedback bad";
+    }
+  }
+
+  function showResult(){
+    swap('screen-room3','screen-closing');
+    finishActivity();
+  }
+
+  // ---------- Scoring + SCORM 1.2 ----------
+  // Score = 100 minus 5 points per wrong attempt, never below 0.
+  // Completing all three rooms reports passed (score 70 or higher) or completed.
+  // Paste the web address of your hosted design brief page here to show the link on the final screen.
+  const BRIEF_URL = "";
+  let misses = 0;
+  const startedAt = Date.now();
+  const Scorm = (function(){
+    let api = null, active = false, closed = false;
+    function findAPI(win){
+      let tries = 0;
+      while(win && !win.API && win.parent && win.parent !== win && tries < 10){ tries++; win = win.parent; }
+      return (win && win.API) ? win.API : null;
+    }
+    function init(){
+      try{
+        api = findAPI(window) || (window.opener ? findAPI(window.opener) : null);
+        if(api){
+          active = String(api.LMSInitialize("")) === "true";
+          if(active){
+            const st = api.LMSGetValue("cmi.core.lesson_status");
+            if(st === "not attempted" || st === "") api.LMSSetValue("cmi.core.lesson_status","incomplete");
+            api.LMSSetValue("cmi.core.score.min","0");
+            api.LMSSetValue("cmi.core.score.max","100");
+            api.LMSCommit("");
+          }
+        }
+      }catch(e){ active = false; }
+    }
+    function pad(n){ return String(n).padStart(2,'0'); }
+    function sessionTime(){
+      const s = Math.round((Date.now() - startedAt)/1000);
+      return pad(Math.floor(s/3600)) + ":" + pad(Math.floor((s%3600)/60)) + ":" + pad(s%60);
+    }
+    function report(score){
+      if(!active) return false;
+      try{
+        api.LMSSetValue("cmi.core.score.raw", String(score));
+        api.LMSSetValue("cmi.core.lesson_status", score >= 70 ? "passed" : "completed");
+        api.LMSSetValue("cmi.core.session_time", sessionTime());
+        return String(api.LMSCommit("")) === "true";
+      }catch(e){ return false; }
+    }
+    function close(){
+      if(active && !closed){
+        closed = true;
+        try{ api.LMSSetValue("cmi.core.session_time", sessionTime()); api.LMSCommit(""); api.LMSFinish(""); }catch(e){}
+      }
+    }
+    return { init, report, close, isActive: ()=>active };
+  })();
+
+  function finishActivity(){
+    if(BRIEF_URL){ const a = document.getElementById('brief-link'); a.href = BRIEF_URL; a.style.display = 'inline-block'; }
+    const score = Math.max(0, 100 - 5*misses);
+    document.getElementById('score-value').textContent = score + " / 100";
+    const sent = Scorm.report(score);
+    document.getElementById('score-note').textContent = sent
+      ? "Score recorded in your gradebook. " + misses + " wrong attempt" + (misses===1?"":"s") + "."
+      : "Preview mode: not connected to a gradebook, so no score was recorded. " + misses + " wrong attempt" + (misses===1?"":"s") + ".";
+  }
+  window.addEventListener('pagehide', ()=> Scorm.close());
+  window.addEventListener('beforeunload', ()=> Scorm.close());
+
+  // ---------- Init ----------
+  renderWordBoard();
+  renderTrivia();
+  renderLocker();
+  Scorm.init();
+
+</script>
+<script>
+
+(function(){
+  const TYPES = [
+    { id:"error",  name:"Find the error",    say:"Something is wrong. Trace the steps and fix it.", best:"Accounting, Nursing, Coding, Math", mech:"Show a short worked example (a solution, entry, paragraph or procedure) with one planted mistake. The student must find the mistake, say what is wrong, and correct it. Explain why the fix is right, and never reveal the location before they try." },
+    { id:"call",   name:"Make the call",     say:"Choose a response and see what follows.", best:"Healthcare, Management, Ethics", mech:"Present a realistic scenario with a decision point and three or four plausible choices. After the student chooses, show the consequence and the reasoning, then let them continue or try a different path." },
+    { id:"order",  name:"Put in order",      say:"Sequence the steps or events correctly.", best:"History, Lab procedures, Processes", mech:"Give a scrambled set of steps or events. The student arranges them in order (with up and down buttons or a keyboard-friendly method, not drag-only). When the order is wrong, name the first step that is out of place and explain why, but do not give the full answer." },
+    { id:"sort",   name:"Sort and classify", say:"Place each example in the right category.", best:"Any discipline with categories or rules", mech:"Give a set of items and two to four categories. The student places each item in a category using buttons or a select menu, not drag-only. When an item is in the wrong category, explain the rule that decides it." },
+    { id:"unlock", name:"Unlock",            say:"Answer to reveal a code and open the next step.", best:"Review, Vocabulary, Exam prep", mech:"Give a series of questions. Each correct answer reveals one piece of a code (a letter, digit or word), and the full code opens the final screen. A wrong answer explains the idea and lets the student try again without penalty to the code." },
+  ];
+  const GRADING = ["SCORM package uploaded to the LMS","Embedded on a course page","Link to a hosted web page","Required before the next module","Linked from an assignment","Not in the LMS"];
+  const RECORDS = [
+    {id:"score", label:"Score (points to the gradebook)"},
+    {id:"complete", label:"Complete or incomplete"},
+    {id:"reflect", label:"Reflection file the student downloads and submits"},
+  ];
+  const STORE = "tpoc2026_brief_v1";
+  let state = { type:"", grading:[], record:[], steps:[{a:"",b:"",c:""},{a:"",b:"",c:""},{a:"",b:"",c:""}] };
+
+  function load(){ try{ const s = localStorage.getItem(STORE); if(s) state = Object.assign(state, JSON.parse(s)); }catch(e){} }
+  function save(){ try{ localStorage.setItem(STORE, JSON.stringify(state)); }catch(e){} }
+
+  // ---- build dynamic UI ----
+  const typesEl = document.getElementById('types');
+  TYPES.forEach(t=>{
+    const l = document.createElement('label'); l.className='type';
+    l.innerHTML = `<input type="radio" name="atype" value="${t.id}"><span><b>${t.name}</b><br><span class="say">"${t.say}"</span><br><span class="best">Best for: ${t.best}</span></span>`;
+    typesEl.appendChild(l);
+  });
+  const body = document.getElementById('steps-body');
+  function buildRows(){
+    body.innerHTML='';
+    state.steps.forEach((st,i)=>{
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td class="rowhead">Step ${i+1}</td>
+      <td><input type="text" data-k="a" aria-label="Step ${i+1}: what the student does"></td>
+      <td><input type="text" data-k="b" aria-label="Step ${i+1}: what counts as correct"></td>
+      <td><input type="text" data-k="c" aria-label="Step ${i+1}: points or completion"></td>`;
+      tr.querySelectorAll('input').forEach(el=>{
+        el.value = st[el.dataset.k]||'';
+        el.addEventListener('input', ()=>{ state.steps[i][el.dataset.k]=el.value; save(); render(); });
+      });
+      body.appendChild(tr);
+    });
+    const rm=document.getElementById('rmstep'); if(rm) rm.disabled = state.steps.length<=1;
+  }
+  const checks = document.getElementById('checks');
+  GRADING.forEach((g,i)=>{
+    const l = document.createElement('label'); l.className='check';
+    l.innerHTML = `<input type="checkbox" value="${g}"><span>${g}</span>`;
+    checks.appendChild(l);
+  });
+
+  const recEl = document.getElementById('records');
+  RECORDS.forEach(r=>{
+    const l = document.createElement('label'); l.className='check';
+    l.innerHTML = `<input type="checkbox" value="${r.id}"><span>${r.label}</span>`;
+    recEl.appendChild(l);
+  });
+
+  // ---- restore ----
+  load();
+  if(!Array.isArray(state.record)) state.record=[];
+  state.grading = (state.grading||[]).filter(x=>GRADING.includes(x));
+  document.querySelectorAll('#records input').forEach(c=>{ c.checked = state.record.includes(c.value); });
+  document.querySelectorAll('[data-save]').forEach(el=>{ if(state[el.id]) el.value = state[el.id]; });
+  document.querySelectorAll('input[name="atype"]').forEach(r=>{ r.checked = (r.value === state.type); });
+  document.querySelectorAll('#checks input').forEach(c=>{ c.checked = state.grading.includes(c.value); });
+  if(!Array.isArray(state.steps)||!state.steps.length) state.steps=[{a:'',b:'',c:''},{a:'',b:'',c:''},{a:'',b:'',c:''}];
+  buildRows();
+
+  // ---- prompts ----
+  const v = (id, ph) => (state[id] && state[id].trim()) ? state[id].trim() : ph;
+  function typeInfo(){ return TYPES.find(t=>t.id===state.type); }
+
+  function buildPrompt1(){
+    const t = typeInfo();
+    const lines = [];
+    lines.push(`I teach ${v('course','[my course]')}. Students in ${v('unit','[my unit]')} keep missing this concept: ${v('concept','[the concept]')}.`);
+    lines.push(`A student who gets it can ${v('success','[what a student who gets it can do]')}.`);
+    lines.push(`Build an interactive activity${t ? ` of the type "${t.name}" (${t.say.toLowerCase().replace(/\.$/, "")})` : ''} where students must do that to move forward. Do not let a student succeed by guessing or clicking quickly.`);
+    if(t && t.mech) lines.push(`How it should work: ${t.mech}`);
+    const steps = state.steps.filter(s=>s.a.trim()||s.b.trim()||s.c.trim());
+    if(steps.length){
+      lines.push('Steps:');
+      steps.forEach((s,i)=> lines.push(`${i+1}. Student does: ${s.a.trim()||'[ ]'}. Correct means: ${s.b.trim()||'[ ]'}. Points or completion: ${s.c.trim()||'[ ]'}.`));
+    }
+    const rc = state.record;
+    if(rc.length){
+      const parts=[];
+      if(rc.includes('score')) parts.push('report a score out of 100');
+      if(rc.includes('complete')) parts.push('mark the activity complete or incomplete');
+      if(rc.includes('reflect')) parts.push('offer a short reflection the student can download as a file (text or PDF) to submit in the LMS');
+      lines.push(`When the student finishes, the activity should ${parts.join(', ')}.`);
+    }
+    if((state.inclass||'').trim()) lines.push(`In class it should work like this: ${state.inclass.trim()}`);
+    if((state.where||'').trim()) lines.push(`Students will open it here: ${state.where.trim()}.`);
+    lines.push('Requirements: one self-contained HTML file with no external dependencies, WCAG 2.1 AA accessible, fully usable by keyboard, with text labels and never color alone, plain language, and a clear final screen.');
+    lines.push('Before you build anything, tell me what you understood the win condition to be, and ask me about anything that is unclear.');
+    return lines.join('\n');
+  }
+  function buildPrompt2(){
+    const g = state.grading;
+    const lines = [];
+    lines.push('Here is my finished activity: [paste or attach the HTML file].');
+    const rc = state.record;
+    const rep = [];
+    if(!rc.length || rc.includes('score')) rep.push('a score out of 100');
+    if(!rc.length || rc.includes('complete')) rep.push('a completion status');
+    if(rep.length) lines.push(`Package it as a SCORM 1.2 zip with an imsmanifest.xml. It should report ${rep.join(' and ')} to the LMS gradebook.`);
+    else lines.push('Package it as a SCORM 1.2 zip with an imsmanifest.xml. It does not need to report a score.');
+    if(rc.includes('reflect')) lines.push('The student also downloads a reflection file on the final screen and submits it in the LMS. Explain how a student does that and how I should set up the assignment to collect it.');
+    if(g.length) lines.push(`How students will reach it in my LMS: ${g.join(', ')}. Tell me the steps for each option I chose.`);
+    const sc = state.steps.map(s=>s.c.trim()).filter(Boolean);
+    if(sc.length) lines.push(`Scoring notes from my brief: ${sc.join('; ')}.`);
+    lines.push('Hold on the final screen so the student can stay until they are ready to exit. Explain the score rule in plain language, and tell me how to test that the score reaches the gradebook.');
+    return lines.join('\n');
+  }
+
+  function render(){
+    document.getElementById('prompt1').textContent = buildPrompt1();
+    document.getElementById('prompt2').textContent = buildPrompt2();
+    const d1 = !!(state.concept||'').trim() && !!state.type;
+    const d2 = !!(state.success||'').trim() || state.record.length>0;
+    const d3 = state.grading.length>0 || !!(state.where||'').trim() || !!(state.inclass||'').trim();
+    [['st1',d1],['st2',d2],['st3',d3]].forEach(([id,on])=> document.getElementById(id).classList.toggle('done', on));
+  }
+
+  // ---- events ----
+  document.querySelectorAll('[data-save]').forEach(el=> el.addEventListener('input', ()=>{ state[el.id]=el.value; save(); render(); }));
+  document.querySelectorAll('input[name="atype"]').forEach(r=> r.addEventListener('change', ()=>{ state.type=r.value; save(); render(); }));
+  document.querySelectorAll('#records input').forEach(c=> c.addEventListener('change', ()=>{
+    state.record = Array.from(document.querySelectorAll('#records input:checked')).map(x=>x.value); save(); render();
+  }));
+  document.querySelectorAll('#checks input').forEach(c=> c.addEventListener('change', ()=>{
+    state.grading = Array.from(document.querySelectorAll('#checks input:checked')).map(x=>x.value); save(); render();
+  }));
+  document.getElementById('addstep').addEventListener('click', ()=>{
+    state.steps.push({a:'',b:'',c:''}); save(); buildRows(); render();
+    const ins=body.querySelectorAll('tr:last-child input'); if(ins[0]) ins[0].focus();
+  });
+  document.getElementById('rmstep').addEventListener('click', ()=>{
+    if(state.steps.length>1){ state.steps.pop(); save(); buildRows(); render(); }
+  });
+
+  const status = document.getElementById('status');
+  document.querySelectorAll('[data-copy]').forEach(b=> b.addEventListener('click', async ()=>{
+    const text = document.getElementById(b.dataset.copy).textContent;
+    try{
+      await navigator.clipboard.writeText(text);
+      status.textContent = 'Copied. Paste it into your AI tool.';
+    }catch(e){
+      const r = document.createRange(); r.selectNodeContents(document.getElementById(b.dataset.copy));
+      const s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      status.textContent = 'Selected. Press Ctrl+C (or Cmd+C) to copy.';
+    }
+  }));
+  function both(){ return 'PROMPT 1: BUILD THE ACTIVITY\n\n'+buildPrompt1()+'\n\n\nPROMPT 2: PACKAGE FOR MY LMS\n\n'+buildPrompt2()+'\n'; }
+  document.getElementById('copyboth').addEventListener('click', async ()=>{
+    try{ await navigator.clipboard.writeText(both()); status.textContent='Both prompts copied. Paste them into your AI tool one at a time.'; }
+    catch(e){ status.textContent='Copy was blocked by the browser. Use the Download button, or copy each prompt box.'; }
+  });
+  const pb=document.getElementById('part-brief');
+  document.getElementById('printprompts').addEventListener('click', ()=>{ pb.classList.add('print-prompts'); window.print(); });
+  document.getElementById('printall').addEventListener('click', ()=>{ pb.classList.remove('print-prompts'); window.print(); });
+  window.addEventListener('afterprint', ()=> pb.classList.remove('print-prompts'));
+  document.getElementById('clear').addEventListener('click', ()=>{
+    if(!confirm('Clear all of your answers on this page?')) return;
+    try{ localStorage.removeItem(STORE); }catch(e){}
+    location.reload();
+  });
+
+  render();
+})();
+
+</script>
+<script>
+
+function showPart(which){
+  var g=document.getElementById('part-game'), b=document.getElementById('part-brief');
+  if(which==='brief'){ g.classList.add('is-hidden'); b.classList.remove('is-hidden'); document.title='Your Design Brief: From Concept to Graded Activity'; }
+  else { b.classList.add('is-hidden'); g.classList.remove('is-hidden'); document.title='One More Hour: A Fall Heist'; }
+  window.scrollTo(0,0);
+}
+function routeFromHash(){ showPart(location.hash==='#brief' ? 'brief' : 'game'); }
+
+(function(){
+  var cur=0;
+  var stepFor={1:'st1',2:'st2',3:'st3'};
+  window.goBrief=function(n){
+    var sc=document.querySelectorAll('#part-brief .bscreen'); if(n<0||n>=sc.length) return; cur=n;
+    sc.forEach(function(el,i){el.classList.toggle('on',i===n);});
+    ['st1','st2','st3'].forEach(function(id){document.getElementById(id).classList.remove('now');});
+    if(stepFor[n]) document.getElementById(stepFor[n]).classList.add('now');
+    window.scrollTo(0,0);
+    var h=sc[n].querySelector('h2'); if(h){h.setAttribute('tabindex','-1'); h.focus({preventScroll:true});}
+  };
+  document.addEventListener('click',function(e){var b=e.target.closest('[data-go]'); if(b) goBrief(+b.dataset.go);});
+  ['st1','st2','st3'].forEach(function(id,i){var el=document.getElementById(id); el.style.cursor='pointer'; el.addEventListener('click',function(){goBrief(i+1);});});
+  var old=window.showPart; window.showPart=function(w){old(w); if(w==='brief') goBrief(0);};
+})();
+
+window.addEventListener('hashchange', routeFromHash);
+routeFromHash();
+
+</script>
+</body>
+</html>
